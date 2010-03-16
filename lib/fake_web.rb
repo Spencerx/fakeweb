@@ -34,17 +34,33 @@ module FakeWeb
   # When <tt>FakeWeb.allow_net_connect = true</tt> (the default), requests to
   # URIs not stubbed with FakeWeb are passed through to Net::HTTP.
   def self.allow_net_connect=(allowed)
-    @allow_net_connect = allowed
+    @allow_all_net_connect = allowed
   end
 
+  def self.allow_net_connect(method, uri)
+    @allow_all_net_connect = false
+    Registry.instance.register_pass_through_uri(method, uri)
+  end
+  
   # Enable pass-through to Net::HTTP by default.
   self.allow_net_connect = true
 
   # Returns +true+ if requests to URIs not registered with FakeWeb are passed
   # through to Net::HTTP for normal processing (the default). Returns +false+
   # if an exception is raised for these requests.
-  def self.allow_net_connect?
-    @allow_net_connect
+  def self.allow_net_connect?(*args)
+    case args.length
+    when 2
+      Registry.instance.registered_pass_through_uri?(*args) || @allow_all_net_connect
+    when 0
+      $stderr.puts
+      $stderr.puts "Deprecation warning: FakeWeb requires method and URI arguments for allow_net_connect? Try this:"
+      $stderr.puts "  FakeWeb.allow_net_connect?(method, uri)"
+      $stderr.puts "Called at #{caller[1]}"
+      @allow_all_net_connect
+    else
+      raise ArgumentError.new("wrong number of arguments (#{args.length} for 2)")
+    end
   end
 
   # This exception is raised if you set <tt>FakeWeb.allow_net_connect =
@@ -176,4 +192,5 @@ module FakeWeb
     $stderr.puts "  FakeWeb.#{method}(#{new_args.join(', ')})"
     $stderr.puts "Called at #{caller[1]}"
   end
+  
 end

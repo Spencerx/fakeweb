@@ -12,7 +12,7 @@ class Test::Unit::TestCase
   alias setup_without_fakeweb setup
   def setup
     FakeWeb.clean_registry
-    @original_allow_net_connect = FakeWeb.allow_net_connect?
+    @original_allow_net_connect = FakeWeb.allow_net_connect?(:any, 'http://example.com')
     FakeWeb.allow_net_connect = false
   end
 

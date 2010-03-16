@@ -62,12 +62,12 @@ class TestFakeWebAllowNetConnect < Test::Unit::TestCase
 
   def test_question_mark_method_returns_true_after_setting_allow_net_connect_to_true
     FakeWeb.allow_net_connect = true
-    assert FakeWeb.allow_net_connect?
+    assert FakeWeb.allow_net_connect?(:get, 'http://example.com')
   end
 
   def test_question_mark_method_returns_false_after_setting_allow_net_connect_to_false
     FakeWeb.allow_net_connect = false
-    assert !FakeWeb.allow_net_connect?
+    assert !FakeWeb.allow_net_connect?(:get, 'http://example.com')
   end
 
 end
@@ -80,6 +80,6 @@ class TestFakeWebAllowNetConnectWithCleanState < Test::Unit::TestCase
   def teardown; end
 
   def test_allow_net_connect_is_true_by_default
-    assert FakeWeb.allow_net_connect?
+    assert FakeWeb.allow_net_connect?(:get, 'http://example.com')
   end
 end
